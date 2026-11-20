@@ -6,8 +6,20 @@ namespace Persistence.Repositories;
 
 public sealed class OrganizationRepository(AppDbContext context) : IOrganizationRepository
 {
-    public async Task<IReadOnlyList<Organization>> GetAllAsync(CancellationToken cancellationToken)
-        => await context.Organizations.AsNoTracking().OrderBy(organization => organization.Name).ToListAsync(cancellationToken);
+    public async Task<IReadOnlyList<Organization>> GetAllAsync(string? name, CancellationToken cancellationToken)
+    {
+        IQueryable<Organization> query = context.Organizations.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            string pattern = $"%{name.Trim()}%";
+
+            query = query.Where(organization 
+                => EF.Functions.ILike(organization.Name, pattern));
+        }
+
+        return await query.OrderBy(organization => organization.Name).ToListAsync(cancellationToken);
+    }
 
     public async Task<Organization?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await context.Organizations.FirstOrDefaultAsync(organization => organization.Id == id, cancellationToken);

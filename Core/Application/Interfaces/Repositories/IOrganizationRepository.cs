@@ -4,7 +4,7 @@ namespace Application.Interfaces.Repositories;
 
 public interface IOrganizationRepository
 {
-    Task<IReadOnlyList<Organization>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<Organization>> GetAllAsync(string? name, CancellationToken cancellationToken);
 
     Task<Organization?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastrucrture", "Infrastr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{84DD2DC7-F18E-498D-93F2-3C80F3DAF8F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{98166321-32ED-48E5-80F6-B5153171458A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "Presentation\WebApi\WebApi.csproj", "{98166321-32ED-48E5-80F6-B5153171458A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

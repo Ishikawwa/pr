@@ -1,11 +1,9 @@
 ﻿using Application.Behaviour.Organizations;
-using Application.Interfaces.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence;
-using Persistence.Repositories;
 
 namespace Infrastructure;
 
@@ -18,7 +16,7 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-        services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+        services.AddRepositories();
 
         services.AddMediatR(options => options.RegisterServicesFromAssembly(typeof(GetOrganizationsQuery).Assembly));
 

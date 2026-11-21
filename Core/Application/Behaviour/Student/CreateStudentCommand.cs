@@ -14,58 +14,33 @@ public sealed record CreateStudentCommand(
     int? AdmissionYear
 ) : IRequest<StudentDto>;
 
-public sealed class CreateStudentCommandValidator
-    : AbstractValidator<CreateStudentCommand>
+public sealed class CreateStudentCommandValidator : AbstractValidator<CreateStudentCommand>
 {
     public CreateStudentCommandValidator()
     {
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress()
-            .MaximumLength(320);
-
-        RuleFor(x => x.FirstName)
-            .NotEmpty()
-            .MaximumLength(200);
-
-        RuleFor(x => x.LastName)
-            .NotEmpty()
-            .MaximumLength(200);
-
-        RuleFor(x => x.Patronymic)
-            .MaximumLength(200);
-
-        RuleFor(x => x.AdmissionYear)
-            .InclusiveBetween(1900, 2200)
-            .When(x => x.AdmissionYear.HasValue);
+        RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(320);
+        RuleFor(x => x.FirstName).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.LastName).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Patronymic).MaximumLength(200);
+        RuleFor(x => x.AdmissionYear).InclusiveBetween(1900, 2200).When(x => x.AdmissionYear.HasValue);
     }
 }
 
-public sealed class CreateStudentCommandHandler(
-    IStudentRepository repository,
-    IValidator<CreateStudentCommand> validator)
+public sealed class CreateStudentCommandHandler(IStudentRepository repository, IValidator<CreateStudentCommand> validator)
     : IRequestHandler<CreateStudentCommand, StudentDto>
 {
-    public async Task<StudentDto> Handle(
-        CreateStudentCommand request,
-        CancellationToken cancellationToken)
+    public async Task<StudentDto> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
     {
-        await validator.ValidateAndThrowAsync(
-            request,
-            cancellationToken);
-
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
         var email = request.Email.Trim();
-
         var emailExists = await repository.EmailExistsAsync(
             email,
             null,
             cancellationToken);
-
         if (emailExists)
         {
             throw new StudentEmailConflictException(email);
         }
-
         var student = new Student
         {
             Email = email,

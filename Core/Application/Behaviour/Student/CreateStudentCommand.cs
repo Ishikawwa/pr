@@ -5,14 +5,7 @@ using MediatR;
 
 namespace Application.Features.Students.Commands;
 
-public sealed record CreateStudentCommand(
-    string Email,
-    string FirstName,
-    string LastName,
-    string? Patronymic,
-    int? AdmissionBase,
-    int? AdmissionYear
-) : IRequest<StudentDto>;
+public sealed record CreateStudentCommand(string Email, string FirstName, string LastName, string? Patronymic, int? AdmissionBase, int? AdmissionYear) : IRequest<StudentDto>;
 
 public sealed class CreateStudentCommandValidator : AbstractValidator<CreateStudentCommand>
 {
@@ -26,22 +19,18 @@ public sealed class CreateStudentCommandValidator : AbstractValidator<CreateStud
     }
 }
 
-public sealed class CreateStudentCommandHandler(IStudentRepository repository, IValidator<CreateStudentCommand> validator)
-    : IRequestHandler<CreateStudentCommand, StudentDto>
+public sealed class CreateStudentCommandHandler(IStudentRepository repository, IValidator<CreateStudentCommand> validator) : IRequestHandler<CreateStudentCommand, StudentDto>
 {
     public async Task<StudentDto> Handle(CreateStudentCommand request, CancellationToken cancellationToken)
     {
         await validator.ValidateAndThrowAsync(request, cancellationToken);
-        var email = request.Email.Trim();
-        var emailExists = await repository.EmailExistsAsync(
-            email,
-            null,
-            cancellationToken);
+        string email = request.Email.Trim();
+        bool emailExists = await repository.EmailExistsAsync(email, null, cancellationToken);
         if (emailExists)
         {
             throw new StudentEmailConflictException(email);
         }
-        var student = new Student
+        Student student = new Student
         {
             Email = email,
             FirstName = request.FirstName.Trim(),
@@ -51,9 +40,7 @@ public sealed class CreateStudentCommandHandler(IStudentRepository repository, I
             AdmissionYear = request.AdmissionYear
         };
 
-        var createdStudent = await repository.AddAsync(
-            student,
-            cancellationToken);
+        Student createdStudent = await repository.AddAsync(student, cancellationToken);
 
         return StudentDto.From(createdStudent);
     }

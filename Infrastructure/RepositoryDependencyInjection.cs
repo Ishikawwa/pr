@@ -12,6 +12,7 @@ public static class RepositoryDependencyInjection
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<IStudyGroupRepository, StudyGroupRepository>();
         services.AddScoped<IAcademicPerformanceRecordRepository, AcademicPerformanceRecordRepository>();
+        services.AddScoped<IStudentDisciplineGradeRepository, StudentDisciplineGradeRepository>();
 
         return services;
     }

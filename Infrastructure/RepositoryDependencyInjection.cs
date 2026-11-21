@@ -10,6 +10,8 @@ public static class RepositoryDependencyInjection
     {
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<IStudyGroupRepository, StudyGroupRepository>();
+        services.AddScoped<IAcademicPerformanceRecordRepository, AcademicPerformanceRecordRepository>();
 
         return services;
     }

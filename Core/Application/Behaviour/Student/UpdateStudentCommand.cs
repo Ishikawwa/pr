@@ -1,21 +1,13 @@
 ﻿using Application.Interfaces.Repositories;
+using Domain.Entities;
 using FluentValidation;
 using MediatR;
 
 namespace Application.Features.Students.Commands;
 
-public sealed record UpdateStudentCommand(
-    int Id,
-    string Email,
-    string FirstName,
-    string LastName,
-    string? Patronymic,
-    int? AdmissionBase,
-    int? AdmissionYear
-) : IRequest<StudentDto>;
+public sealed record UpdateStudentCommand(int Id, string Email, string FirstName, string LastName, string? Patronymic, int? AdmissionBase, int? AdmissionYear) : IRequest<StudentDto>;
 
-public sealed class UpdateStudentCommandValidator
-    : AbstractValidator<UpdateStudentCommand>
+public sealed class UpdateStudentCommandValidator : AbstractValidator<UpdateStudentCommand>
 {
     public UpdateStudentCommandValidator()
     {
@@ -44,34 +36,22 @@ public sealed class UpdateStudentCommandValidator
     }
 }
 
-public sealed class UpdateStudentCommandHandler(
-    IStudentRepository repository,
-    IValidator<UpdateStudentCommand> validator)
-    : IRequestHandler<UpdateStudentCommand, StudentDto>
+public sealed class UpdateStudentCommandHandler(IStudentRepository repository, IValidator<UpdateStudentCommand> validator) : IRequestHandler<UpdateStudentCommand, StudentDto>
 {
-    public async Task<StudentDto> Handle(
-        UpdateStudentCommand request,
-        CancellationToken cancellationToken)
+    public async Task<StudentDto> Handle(UpdateStudentCommand request, CancellationToken cancellationToken)
     {
-        await validator.ValidateAndThrowAsync(
-            request,
-            cancellationToken);
+        await validator.ValidateAndThrowAsync(request, cancellationToken);
 
-        var student = await repository.GetByIdAsync(
-            request.Id,
-            cancellationToken);
+        Student student = await repository.GetByIdAsync(request.Id, cancellationToken);
 
         if (student is null)
         {
             throw new StudentNotFoundException(request.Id);
         }
 
-        var email = request.Email.Trim();
+        string email = request.Email.Trim();
 
-        var emailExists = await repository.EmailExistsAsync(
-            email,
-            request.Id,
-            cancellationToken);
+        bool emailExists = await repository.EmailExistsAsync(email, request.Id, cancellationToken);
 
         if (emailExists)
         {
@@ -85,9 +65,7 @@ public sealed class UpdateStudentCommandHandler(
         student.AdmissionBase = request.AdmissionBase;
         student.AdmissionYear = request.AdmissionYear;
 
-        await repository.UpdateAsync(
-            student,
-            cancellationToken);
+        await repository.UpdateAsync(student, cancellationToken);
 
         return StudentDto.From(student);
     }

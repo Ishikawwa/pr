@@ -17,9 +17,11 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API for managing organizations and students"
     });
 });
-    
+
 builder.Services.AddProjectDependencies(builder.Configuration);
 
+builder.Services.AddExceptionHandler<AcademicPerformanceRecordExceptionHandler>();
+builder.Services.AddExceptionHandler<StudyGroupExceptionHandler>();
 builder.Services.AddExceptionHandler<StudentExceptionHandler>();
 builder.Services.AddProblemDetails();
 

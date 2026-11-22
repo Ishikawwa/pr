@@ -23,7 +23,7 @@ public static class RepositoryDependencyInjection
         services.AddScoped<IEmployeePositionRepository, EmployeePositionRepository>();
         services.AddScoped<IDisciplineRepository, DisciplineRepository>();
         services.AddScoped<IFgosDisciplineMappingRepository, FgosDisciplineMappingRepository>();
-
+        services.AddScoped<IStudyPlanDisciplineRepository, StudyPlanDisciplineRepository>();
 
         return services;
     }

@@ -18,6 +18,7 @@ public static class RepositoryDependencyInjection
         services.AddScoped<IStudyProgramRepository, StudyProgramRepository>();
         services.AddScoped<IStudyPlanRepository, StudyPlanRepository>();
         services.AddScoped<IFgosDisciplineRepository, FgosDisciplineRepository>();
+        services.AddScoped<IPositionRepository, PositionRepository>();
         return services;
     }
 }

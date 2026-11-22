@@ -21,6 +21,7 @@ public static class RepositoryDependencyInjection
         services.AddScoped<IPositionRepository, PositionRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IEmployeePositionRepository, EmployeePositionRepository>();
+        services.AddScoped<IDisciplineRepository, DisciplineRepository>();
 
         return services;
     }

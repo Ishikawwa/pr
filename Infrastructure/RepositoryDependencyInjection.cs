@@ -29,6 +29,7 @@ public static class RepositoryDependencyInjection
         services.AddScoped<IStudentLicenseHistoryRepository, StudentLicenseHistoryRepository>();
         services.AddScoped<IAttestationCommissionRepository, AttestationCommissionRepository>();
         services.AddScoped<IAttestationCommissionMemberRepository, AttestationCommissionMemberRepository>();
+        services.AddScoped<IImportBatchRepository, ImportBatchRepository>();
 
         return services;
     }

@@ -20,6 +20,9 @@ builder.Services.AddSwaggerGen(options =>
     
 builder.Services.AddProjectDependencies(builder.Configuration);
 
+builder.Services.AddExceptionHandler<StudentDisciplineGradeExceptionHandler>();
+builder.Services.AddExceptionHandler<AcademicPerformanceRecordExceptionHandler>();
+builder.Services.AddExceptionHandler<StudyGroupExceptionHandler>();
 builder.Services.AddExceptionHandler<StudentExceptionHandler>();
 builder.Services.AddProblemDetails();
 

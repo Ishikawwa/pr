@@ -10,6 +10,25 @@ public static class RepositoryDependencyInjection
     {
         services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         services.AddScoped<IStudentRepository, StudentRepository>();
+        services.AddScoped<IStudyGroupRepository, StudyGroupRepository>();
+        services.AddScoped<IAcademicPerformanceRecordRepository, AcademicPerformanceRecordRepository>();
+        services.AddScoped<IStudentDisciplineGradeRepository, StudentDisciplineGradeRepository>();
+        services.AddScoped<ISuborganizationRepository, SuborganizationRepository>();
+        services.AddScoped<IStudyProgramRepository, StudyProgramRepository>();
+        services.AddScoped<IStudyPlanRepository, StudyPlanRepository>();
+        services.AddScoped<IFgosDisciplineRepository, FgosDisciplineRepository>();
+        services.AddScoped<IPositionRepository, PositionRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IEmployeePositionRepository, EmployeePositionRepository>();
+        services.AddScoped<IDisciplineRepository, DisciplineRepository>();
+        services.AddScoped<IFgosDisciplineMappingRepository, FgosDisciplineMappingRepository>();
+        services.AddScoped<IStudyPlanDisciplineRepository, StudyPlanDisciplineRepository>();
+        services.AddScoped<ILicenseRepository, LicenseRepository>();
+        services.AddScoped<IStudentLicenseRepository, StudentLicenseRepository>();
+        services.AddScoped<IStudentLicenseHistoryRepository, StudentLicenseHistoryRepository>();
+        services.AddScoped<IAttestationCommissionRepository, AttestationCommissionRepository>();
+        services.AddScoped<IAttestationCommissionMemberRepository, AttestationCommissionMemberRepository>();
+        services.AddScoped<IImportBatchRepository, ImportBatchRepository>();
 
         return services;
     }

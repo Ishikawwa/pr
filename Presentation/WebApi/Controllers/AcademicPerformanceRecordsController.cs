@@ -11,10 +11,27 @@ namespace WebApi.Controllers;
 public sealed class AcademicPerformanceRecordsController(ISender sender) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<AcademicPerformanceRecordDto>>> GetAll(CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<AcademicPerformanceRecordDto>>> GetAll(
+        [FromQuery] int? importBatchId,
+        [FromQuery] int? sourceRowNumber,
+        [FromQuery] int? disciplineId,
+        [FromQuery] int? organizationId,
+        [FromQuery] int? semesterId,
+        [FromQuery] int? studentId,
+        [FromQuery] int? studyGroupId,
+        [FromQuery] int? suborganizationId,
+        CancellationToken cancellationToken)
     {
         IReadOnlyList<AcademicPerformanceRecordDto> records = await sender.Send(
-            new GetAcademicPerformanceRecordsQuery(),
+            new GetAcademicPerformanceRecordsQuery(
+                importBatchId,
+                sourceRowNumber,
+                disciplineId,
+                organizationId,
+                semesterId,
+                studentId,
+                studyGroupId,
+                suborganizationId),
             cancellationToken);
 
         return Ok(records);
@@ -47,6 +64,43 @@ public sealed class AcademicPerformanceRecordsController(ISender sender) : Contr
         CancellationToken cancellationToken)
     {
         UpdateAcademicPerformanceRecordCommand command = new UpdateAcademicPerformanceRecordCommand(
+            id,
+            request.AllDisciplineTeachers,
+            request.AvailableControlPoints,
+            request.CurrentDisciplinePercent,
+            request.CurrentPointsFivePointScale,
+            request.CurrentStudentAveragePercent,
+            request.FinalPoints,
+            request.FinalPointsFivePointScale,
+            request.ImportBatchId,
+            request.MaxAvailableControlPoints,
+            request.MaxDisciplinePoints,
+            request.MaxPointsByTopics,
+            request.RetakePoints,
+            request.RetakePointsNew,
+            request.SourceRowNumber,
+            request.TaskAndTestPoints,
+            request.TeachersFromWorkload,
+            request.TeachersWhoGraded,
+            request.DisciplineId,
+            request.OrganizationId,
+            request.SemesterId,
+            request.StudentId,
+            request.StudyGroupId,
+            request.SuborganizationId);
+
+        AcademicPerformanceRecordDto record = await sender.Send(command, cancellationToken);
+
+        return Ok(record);
+    }
+
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult<AcademicPerformanceRecordDto>> Patch(
+        int id,
+        [FromBody] PatchAcademicPerformanceRecordRequest request,
+        CancellationToken cancellationToken)
+    {
+        PatchAcademicPerformanceRecordCommand command = new PatchAcademicPerformanceRecordCommand(
             id,
             request.AllDisciplineTeachers,
             request.AvailableControlPoints,
@@ -110,3 +164,28 @@ public sealed record UpdateAcademicPerformanceRecordRequest(
     int StudentId,
     int StudyGroupId,
     int SuborganizationId);
+
+public sealed record PatchAcademicPerformanceRecordRequest(
+    string? AllDisciplineTeachers,
+    int? AvailableControlPoints,
+    string? CurrentDisciplinePercent,
+    int? CurrentPointsFivePointScale,
+    string? CurrentStudentAveragePercent,
+    int? FinalPoints,
+    int? FinalPointsFivePointScale,
+    int? ImportBatchId,
+    int? MaxAvailableControlPoints,
+    int? MaxDisciplinePoints,
+    int? MaxPointsByTopics,
+    int? RetakePoints,
+    int? RetakePointsNew,
+    int? SourceRowNumber,
+    int? TaskAndTestPoints,
+    string? TeachersFromWorkload,
+    string? TeachersWhoGraded,
+    int? DisciplineId,
+    int? OrganizationId,
+    int? SemesterId,
+    int? StudentId,
+    int? StudyGroupId,
+    int? SuborganizationId);

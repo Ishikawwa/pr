@@ -4,7 +4,17 @@ namespace Application.Interfaces.Repositories;
 
 public interface IStudentDisciplineGradeRepository
 {
-    Task<IReadOnlyList<StudentDisciplineGrade>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<StudentDisciplineGrade>> GetAllAsync(
+        string? grade,
+        int? studentId,
+        int? disciplineId,
+        int? employeeId,
+        int? academicPerformanceId,
+        int? admissionYear,
+        int? semesterNumber,
+        DateTime? dateFrom,
+        DateTime? dateTo,
+        CancellationToken cancellationToken);
 
     Task<StudentDisciplineGrade?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

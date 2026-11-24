@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories;
 
-public sealed class StudentRepository(AppDbContext db) : IStudentRepository
+public sealed class StudentRepository(AppDbContext db)
+    : IStudentRepository
 {
-    public async Task<IReadOnlyList<Student>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Student>> GetAllAsync(
+        CancellationToken cancellationToken)
     {
         return await db.Students
             .AsNoTracking()
@@ -14,13 +16,20 @@ public sealed class StudentRepository(AppDbContext db) : IStudentRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Student?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<Student?> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken)
     {
         return await db.Students
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(
+                x => x.Id == id,
+                cancellationToken);
     }
 
-    public async Task<bool> EmailExistsAsync(string email, int? excludingId, CancellationToken cancellationToken)
+    public async Task<bool> EmailExistsAsync(
+        string email,
+        int? excludingId,
+        CancellationToken cancellationToken)
     {
         return await db.Students.AnyAsync(
             x => x.Email == email &&
@@ -29,7 +38,9 @@ public sealed class StudentRepository(AppDbContext db) : IStudentRepository
             cancellationToken);
     }
 
-    public async Task<Student> AddAsync(Student student, CancellationToken cancellationToken)
+    public async Task<Student> AddAsync(
+        Student student,
+        CancellationToken cancellationToken)
     {
         db.Students.Add(student);
 
@@ -38,12 +49,16 @@ public sealed class StudentRepository(AppDbContext db) : IStudentRepository
         return student;
     }
 
-    public async Task UpdateAsync(Student student, CancellationToken cancellationToken)
+    public async Task UpdateAsync(
+        Student student,
+        CancellationToken cancellationToken)
     {
         await db.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Student student, CancellationToken cancellationToken)
+    public async Task DeleteAsync(
+        Student student,
+        CancellationToken cancellationToken)
     {
         db.Students.Remove(student);
 

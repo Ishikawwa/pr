@@ -21,4 +21,23 @@
       <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
 </ItemGroup>
 
+  <Target Name="BuildReactFrontend" BeforeTargets="Build" Condition="Exists('..\..\Frontend\package.json') and '$(SkipFrontendBuild)' != 'true'">
+    <Exec WorkingDirectory="..\..\Frontend" Command="npm run build" Condition="Exists('..\..\Frontend\node_modules')" />
+    <Message Text="React frontend build skipped because Frontend/node_modules is missing. Run 'npm install' and 'npm run build' in Frontend." Importance="high" Condition="!Exists('..\..\Frontend\node_modules')" />
+  </Target>
+
+  <Target Name="CopyReactFrontendToBuildOutput" AfterTargets="Build" Condition="Exists('wwwroot\index.html')">
+    <ItemGroup>
+      <_ReactFrontendFiles Include="wwwroot\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ReactFrontendFiles)" DestinationFiles="@(_ReactFrontendFiles->'$(OutDir)wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyReactFrontendToPublishOutput" AfterTargets="Publish" Condition="Exists('wwwroot\index.html')">
+    <ItemGroup>
+      <_ReactFrontendFiles Include="wwwroot\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ReactFrontendFiles)" DestinationFiles="@(_ReactFrontendFiles->'$(PublishDir)wwwroot\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
+
 </Project>

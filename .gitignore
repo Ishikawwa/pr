@@ -3,3 +3,6 @@
 **/bin/
 **/obj/
 *.slnLaunch.user
+Frontend/node_modules/
+Frontend/dist/
+Presentation/WebApi/wwwroot/

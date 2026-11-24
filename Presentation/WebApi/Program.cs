@@ -1,3 +1,4 @@
+
 using Infrastructure;
 using Microsoft.OpenApi.Models;
 using WebApi;
@@ -16,7 +17,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API for managing organizations and students"
     });
 });
-
+    
 builder.Services.AddProjectDependencies(builder.Configuration);
 
 builder.Services.AddExceptionHandler<StudentDisciplineGradeExceptionHandler>();
@@ -41,6 +42,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.Run();

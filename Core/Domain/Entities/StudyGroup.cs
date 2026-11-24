@@ -12,6 +12,10 @@ public partial class StudyGroup
     public int SuborganizationId { get; set; }
 
     public int? StudyProgramId { get; set; }
+    
+    public virtual ICollection<ExportConfiguration> ExportConfigurations { get; set; } = new List<ExportConfiguration>();
+
+    public virtual ICollection<ExportTemplateVersion> ExportTemplateVersions { get; set; } = new List<ExportTemplateVersion>();
 
     public int? StudyPlanId { get; set; }
 

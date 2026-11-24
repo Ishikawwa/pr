@@ -54,6 +54,14 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Suborganization> Suborganizations { get; set; }
 
+    public virtual DbSet<ExportConfiguration> ExportConfigurations { get; set; }
+
+    public virtual DbSet<ExportConfigurationVersion> ExportConfigurationVersions { get; set; }
+
+    public virtual DbSet<ExportTemplateVersion> ExportTemplateVersions { get; set; }
+
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AcademicPerformanceRecord>(entity =>
@@ -557,6 +565,116 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.OrganizationId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("suborganizations_organizationId_fkey");
+        });
+
+        modelBuilder.Entity<ExportConfiguration>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("export_configurations_pkey");
+
+            entity.ToTable("export_configurations");
+
+            entity.HasIndex(e => new { e.TemplateKey, e.StudyGroupId }, "export_config_template_group_idx");
+
+            entity.HasIndex(e => e.ActiveVersionId, "export_configurations_activeVersionId_idx_be27fc16");
+
+            entity.HasIndex(e => e.StudyGroupId, "export_configurations_studyGroupId_idx_b7300630");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ActiveVersionId).HasColumnName("activeVersionId");
+            entity.Property(e => e.CreatedAt)
+                .HasPrecision(3)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(false)
+                .HasColumnName("isActive");
+            entity.Property(e => e.StudyGroupId).HasColumnName("studyGroupId");
+            entity.Property(e => e.TemplateKey).HasColumnName("templateKey");
+            entity.Property(e => e.UpdatedAt)
+                .HasPrecision(3)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("updatedAt");
+
+            entity.HasOne(d => d.ActiveVersion).WithMany(p => p.ExportConfigurations)
+                .HasForeignKey(d => d.ActiveVersionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("export_configurations_activeVersionId_fkey");
+
+            entity.HasOne(d => d.StudyGroup).WithMany(p => p.ExportConfigurations)
+                .HasForeignKey(d => d.StudyGroupId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("export_configurations_studyGroupId_fkey");
+        });
+
+        modelBuilder.Entity<ExportConfigurationVersion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("export_configuration_versions_pkey");
+
+            entity.ToTable("export_configuration_versions");
+
+            entity.HasIndex(e => new { e.ConfigurationId, e.CreatedAt }, "export_config_version_history_idx");
+
+            entity.HasIndex(e => new { e.ConfigurationId, e.VersionNumber }, "export_config_version_key").IsUnique();
+
+            entity.HasIndex(e => e.ConfigurationId, "export_configuration_versions_configurationId_idx_9f879af3");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ChangeNote).HasColumnName("changeNote");
+            entity.Property(e => e.ConfigurationId).HasColumnName("configurationId");
+            entity.Property(e => e.CreatedAt)
+                .HasPrecision(3)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Settings)
+                .HasColumnType("json")
+                .HasColumnName("settings");
+            entity.Property(e => e.VersionNumber).HasColumnName("versionNumber");
+
+            entity.HasOne(d => d.Configuration).WithMany(p => p.ExportConfigurationVersions)
+                .HasForeignKey(d => d.ConfigurationId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("export_configuration_versions_configurationId_fkey");
+        });
+
+        modelBuilder.Entity<ExportTemplateVersion>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("export_template_versions_pkey");
+
+            entity.ToTable("export_template_versions");
+
+            entity.HasIndex(e => e.BasedOnVersionId, "export_template_version_parent_idx");
+
+            entity.HasIndex(e => new { e.TemplateKey, e.StudyGroupId, e.VersionNumber }, "export_template_version_scope_idx");
+
+            entity.HasIndex(e => e.StudyGroupId, "export_template_versions_studyGroupId_idx_b7300630");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.BasedOnVersionId).HasColumnName("basedOnVersionId");
+            entity.Property(e => e.ContentBase64).HasColumnName("contentBase64");
+            entity.Property(e => e.CreatedAt)
+                .HasPrecision(3)
+                .HasDefaultValueSql("now()")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.Format).HasColumnName("format");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(false)
+                .HasColumnName("isActive");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.OriginalFileName).HasColumnName("originalFileName");
+            entity.Property(e => e.StudyGroupId).HasColumnName("studyGroupId");
+            entity.Property(e => e.TemplateKey).HasColumnName("templateKey");
+            entity.Property(e => e.VersionNumber).HasColumnName("versionNumber");
+
+            entity.HasOne(d => d.BasedOnVersion).WithMany(p => p.InverseBasedOnVersion)
+                .HasForeignKey(d => d.BasedOnVersionId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("export_template_versions_basedOnVersionId_fkey");
+
+            entity.HasOne(d => d.StudyGroup).WithMany(p => p.ExportTemplateVersions)
+                .HasForeignKey(d => d.StudyGroupId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("export_template_versions_studyGroupId_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

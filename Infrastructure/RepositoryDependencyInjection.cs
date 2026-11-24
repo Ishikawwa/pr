@@ -30,6 +30,9 @@ public static class RepositoryDependencyInjection
         services.AddScoped<IAttestationCommissionRepository, AttestationCommissionRepository>();
         services.AddScoped<IAttestationCommissionMemberRepository, AttestationCommissionMemberRepository>();
         services.AddScoped<IImportBatchRepository, ImportBatchRepository>();
+        services.AddScoped<IExportConfigurationRepository, ExportConfigurationRepository>();
+        services.AddScoped<IExportConfigurationVersionRepository, ExportConfigurationVersionRepository>();
+        services.AddScoped<IExportTemplateVersionRepository, ExportTemplateVersionRepository>();
 
         return services;
     }

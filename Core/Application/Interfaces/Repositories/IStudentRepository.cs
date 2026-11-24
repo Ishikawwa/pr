@@ -4,7 +4,7 @@ namespace Application.Interfaces.Repositories;
 
 public interface IStudentRepository
 {
-    Task<IReadOnlyList<Student>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<Student>> GetAllAsync(string? search, int? admissionBase, int? admissionYear, CancellationToken cancellationToken);
 
     Task<Student?> GetByIdAsync(int id, CancellationToken cancellationToken);
 

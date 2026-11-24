@@ -16,7 +16,6 @@ public sealed record StudyGroupDto(
             studyGroup.Name,
             studyGroup.SuborganizationId,
             studyGroup.StudyProgramId,
-            studyGroup.StudyPlanId
-        );
+            studyGroup.StudyPlanId);
     }
 }

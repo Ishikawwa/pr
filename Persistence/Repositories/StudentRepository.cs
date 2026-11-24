@@ -1,46 +1,46 @@
-﻿using Application.Interfaces.Repositories;
+﻿
+using Application.Interfaces.Repositories;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Repositories;
 
-public sealed class StudentRepository(AppDbContext db)
-    : IStudentRepository
+public sealed class StudentRepository(AppDbContext db) : IStudentRepository
 {
-    public async Task<IReadOnlyList<Student>> GetAllAsync(
-        CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Student>> GetAllAsync(string? search, int? admissionBase, int? admissionYear, CancellationToken cancellationToken)
     {
-        return await db.Students
-            .AsNoTracking()
-            .OrderBy(x => x.Id)
-            .ToListAsync(cancellationToken);
+        IQueryable<Student> query = db.Students.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(student =>
+                EF.Functions.ILike(student.Email, $"%{search.Trim()}%") ||
+                EF.Functions.ILike(student.FirstName, $"%{search.Trim()}%") ||
+                EF.Functions.ILike(student.LastName, $"%{search.Trim()}%") ||
+                (student.Patronymic != null && EF.Functions.ILike(student.Patronymic, $"%{search.Trim()}%")));
+
+        if (admissionBase.HasValue)
+            query = query.Where(student => student.AdmissionBase == admissionBase.Value);
+
+        if (admissionYear.HasValue)
+            query = query.Where(student => student.AdmissionYear == admissionYear.Value);
+
+        return await query.OrderBy(student => student.Id).ToListAsync(cancellationToken);
     }
 
-    public async Task<Student?> GetByIdAsync(
-        int id,
-        CancellationToken cancellationToken)
+    public async Task<Student?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await db.Students
-            .FirstOrDefaultAsync(
-                x => x.Id == id,
-                cancellationToken);
+        return await db.Students.FirstOrDefaultAsync(student => student.Id == id, cancellationToken);
     }
 
-    public async Task<bool> EmailExistsAsync(
-        string email,
-        int? excludingId,
-        CancellationToken cancellationToken)
+    public async Task<bool> EmailExistsAsync(string email, int? excludingId, CancellationToken cancellationToken)
     {
         return await db.Students.AnyAsync(
-            x => x.Email == email &&
-                 (!excludingId.HasValue ||
-                  x.Id != excludingId.Value),
+            student => student.Email == email &&
+                       (!excludingId.HasValue || student.Id != excludingId.Value),
             cancellationToken);
     }
 
-    public async Task<Student> AddAsync(
-        Student student,
-        CancellationToken cancellationToken)
+    public async Task<Student> AddAsync(Student student, CancellationToken cancellationToken)
     {
         db.Students.Add(student);
 
@@ -49,16 +49,12 @@ public sealed class StudentRepository(AppDbContext db)
         return student;
     }
 
-    public async Task UpdateAsync(
-        Student student,
-        CancellationToken cancellationToken)
+    public async Task UpdateAsync(Student student, CancellationToken cancellationToken)
     {
         await db.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(
-        Student student,
-        CancellationToken cancellationToken)
+    public async Task DeleteAsync(Student student, CancellationToken cancellationToken)
     {
         db.Students.Remove(student);
 

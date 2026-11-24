@@ -1,10 +1,20 @@
-﻿using Domain.Entities;
+﻿
+using Domain.Entities;
 
 namespace Application.Interfaces.Repositories;
 
 public interface IAcademicPerformanceRecordRepository
 {
-    Task<IReadOnlyList<AcademicPerformanceRecord>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IReadOnlyList<AcademicPerformanceRecord>> GetAllAsync(
+        int? importBatchId,
+        int? sourceRowNumber,
+        int? disciplineId,
+        int? organizationId,
+        int? semesterId,
+        int? studentId,
+        int? studyGroupId,
+        int? suborganizationId,
+        CancellationToken cancellationToken);
 
     Task<AcademicPerformanceRecord?> GetByIdAsync(int id, CancellationToken cancellationToken);
 
